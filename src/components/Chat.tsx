@@ -41,7 +41,6 @@ const Chat = ({
           </div>
         ) : (
           <div className="p-4 flex flex-col gap-4 overflow-y-scroll h-[80vh]">
-            <div>File Uploaded</div>
             {currChatData.question_hist.map((qs, subindex) =>
               qs === "" ? null : (
                 <div key={subindex} className="flex flex-col gap-2">

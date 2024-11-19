@@ -31,8 +31,14 @@ const Chatbot: React.FC = () => {
 
       const firebaseData: ChatData[] = [];
       docSnap.forEach((doc) => {
-        const data = doc.data() as ChatData;
-        firebaseData.push(data);
+        const data = doc.data();
+        
+        // Check if the object is not empty
+        if (Object.keys(data).length === 0) return;
+
+        const chatData = data as ChatData;
+        firebaseData.push(chatData);
+        console.log(chatData);
       });
 
       setChatdata(firebaseData);
@@ -64,7 +70,6 @@ const Chatbot: React.FC = () => {
         {sortedChatData.length > 0 ? (
           <Chatsidebar
             sortedChatData={sortedChatData}
-            currChatData={currChatData}
             setcurrChatData={setcurrChatData}
           />
         ) : (

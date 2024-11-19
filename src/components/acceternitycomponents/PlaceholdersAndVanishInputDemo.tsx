@@ -30,11 +30,11 @@ export function PlaceholdersAndVanishInputDemo({
   const uid = user?.id || "No UID found";
 
   const placeholders = [
-    "What's the first rule of Fight Club?",
-    "Who is Tyler Durden?",
-    "Where is Andrew Laeddis hiding?",
-    "Write a JavaScript method to reverse a string.",
-    "How to assemble your own PC?",
+    "Can you summarize this document?",
+    "What is this document about?",
+    "What is written on the second page?",
+    "Create a summary of the first paragraph.",
+    "List the key points of the document.",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +50,6 @@ export function PlaceholdersAndVanishInputDemo({
     }
 
     try {
-      // Query the collection to find the specific document
       const docQuery = query(
         collection(db, "chatdata"),
         where("id", "==", currChatData.id)
@@ -62,7 +61,7 @@ export function PlaceholdersAndVanishInputDemo({
         return;
       }
 
-      const docRef = querySnapshot.docs[0].ref; // Assuming IDs are unique, take the first match
+      const docRef = querySnapshot.docs[0].ref;
 
       // Update the document with the new question
       const newQuestionHist = [...(currChatData.question_hist || []), currQuestion];
@@ -81,13 +80,12 @@ export function PlaceholdersAndVanishInputDemo({
       );
 
       if (response.status === 200) {
-        // Update the document with the new answer
         const newAnswerHist = [...(currChatData.answer_hist || []), response.data.answer];
         await updateDoc(docRef, {
           answer_hist: newAnswerHist,
         });
 
-        setCurrQuestion(""); // Reset the input field
+        setCurrQuestion("");
       } else {
         console.error("API call failed with status:", response.status);
       }
@@ -97,7 +95,7 @@ export function PlaceholdersAndVanishInputDemo({
   };
 
   return (
-    <div className="h-fit flex flex-col justify-center items-center">
+    <div className="h-fit w-full flex flex-col justify-center items-center">
       <PlaceholdersAndVanishInput
         placeholders={placeholders}
         onChange={handleChange}
