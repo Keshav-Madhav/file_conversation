@@ -2,66 +2,99 @@
 
 import { useState } from "react";
 import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input";
-import { chatdata } from "../Chatbot";
+import askQuestionAPI from "@/lib/apis/askQuestionAPI";
+import { collection, query, where, getDocs, updateDoc } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
+import { app } from "@/firebase";
+import { useUser } from "@clerk/nextjs";
 
+const db = getFirestore(app);
 
-export function PlaceholdersAndVanishInputDemo({currChatUid}:{currChatUid:string}) {
+interface ChatData {
+  id: string;
+  file_hash: string;
+  input_query: string;
+  question_hist: string[];
+  answer_hist: string[];
+  timestamp: string;
+  inuse: boolean;
+}
+
+export function PlaceholdersAndVanishInputDemo({
+  currChatData,
+}: {
+  currChatData: ChatData | undefined;
+}) {
   const [currQuestion, setCurrQuestion] = useState("");
-  const [currAnswer, setCurrAnswer] = useState("");
-  const [currChat, setCurrChat] = useState({});
+  const { user } = useUser();
+  const uid = user?.id || "No UID found";
+
   const placeholders = [
     "What's the first rule of Fight Club?",
     "Who is Tyler Durden?",
-    "Where is Andrew Laeddis Hiding?",
-    "Write a Javascript method to reverse a string",
+    "Where is Andrew Laeddis hiding?",
+    "Write a JavaScript method to reverse a string.",
     "How to assemble your own PC?",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrQuestion(e.target.value);
   };
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("currChatuid is this:"+currChatUid);
-    if(currChatUid === ""){
-      setCurrChat((prev)=>({
-        ...prev,
-        uid: "",
-        file_hash: "",
-        input_query: {currQuestion},
-        question_hist: [],
-        answer_hist: [],
-        timestamp: new Date().toISOString(),
-      }))
-      // chatdata.push(setCurrChat);
-      console.log(chatdata);
-      e.preventDefault();
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!currChatData) {
+      console.error("No current chat data available.");
+      return;
     }
-    else{
-      chatdata.map((chat, index)=>{
-        if(chat.uid === currChatUid){
-          // add history to the existing chat 
-          chat.question_hist.push(currQuestion);
-        }
-      })
+
+    try {
+      // Query the collection to find the specific document
+      const docQuery = query(
+        collection(db, "chatdata"),
+        where("id", "==", currChatData.id)
+      );
+      const querySnapshot = await getDocs(docQuery);
+
+      if (querySnapshot.empty) {
+        console.error("No matching document found for the given chat ID.");
+        return;
+      }
+
+      const docRef = querySnapshot.docs[0].ref; // Assuming IDs are unique, take the first match
+
+      // Update the document with the new question
+      const newQuestionHist = [...(currChatData.question_hist || []), currQuestion];
+      await updateDoc(docRef, {
+        input_query: currQuestion,
+        question_hist: newQuestionHist,
+      });
+
+      // Call API
+      const response = await askQuestionAPI(
+        "DwxQP1aK7XbJKtFnzjaJ",
+        uid,
+        currQuestion,
+        currChatData.question_hist || [],
+        currChatData.answer_hist || []
+      );
+
+      if (response.status === 200) {
+        // Update the document with the new answer
+        const newAnswerHist = [...(currChatData.answer_hist || []), response.data.answer];
+        await updateDoc(docRef, {
+          answer_hist: newAnswerHist,
+        });
+
+        setCurrQuestion(""); // Reset the input field
+      } else {
+        console.error("API call failed with status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error in onSubmit:", error);
     }
   };
-
-  // //   action taken on clicking on tha start button
-  // const startNewChat = () => {
-  //   const newChat = {
-  //     uid: "",
-  //     file_hash: "",
-  //     input_query: [],
-  //     question_hist: [],
-  //     answer_hist: [],
-  //     timestamp: new Date().toISOString(), // Add current timestamp
-  //   };
-
-  //   // Update the state with the new chat
-  //   // setChats((prevChats) => [...prevChats, newChat]);
-  // };
-
-
 
   return (
     <div className="h-fit flex flex-col justify-center items-center">

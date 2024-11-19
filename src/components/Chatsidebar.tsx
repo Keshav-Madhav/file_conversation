@@ -1,57 +1,50 @@
-import React, { useEffect, useState } from "react";
-import { chatdata } from "./Chatbot";
+import React from "react";
 
-// { setCurrChatuid, startNewChat }
+interface ChatData {
+  id: string;
+  file_hash: string;
+  input_query: string;
+  question_hist: string[];
+  answer_hist: string[];
+  timestamp: string;
+  inuse: boolean;
+}
+
 const Chatsidebar = ({
-  currChatUid,
-  setCurrChatUid,
+  currChatData,
+  setcurrChatData,
   sortedChatData,
 }: {
-  currChatUid: string;
-  setCurrChatUid: React.Dispatch<React.SetStateAction<string>>;
-  sortedChatData: {
-    uid: string;
-    file_hash: string;
-    input_query: string;
-    question_hist: string[];
-    answer_hist: string[];
-    timestamp: string;
-    inuse: boolean;
-  }[];
+  currChatData: ChatData | undefined;
+  setcurrChatData: React.Dispatch<React.SetStateAction<ChatData | undefined>>;
+  sortedChatData: ChatData[];
 }) => {
-  useEffect(() => {
-    useit(currChatUid);
-  });
-  const useit = (curruid: string) => {
-    console.log("function called");
-    chatdata.map((chat) => {
-      if (chat.inuse && chat.uid !== curruid) {
-        chat.inuse = false;
-      }
-      if (!chat.inuse && chat.uid === curruid) {
-        chat.inuse = true;
-        setCurrChatUid(chat.uid);
-      }
-    });
-  };
-
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <h1>Start New Chat</h1>
-        <button className="grey_btn">Start</button>
+        <button
+          className="grey_btn"
+          onClick={() => {
+            setcurrChatData(undefined);
+          }}
+        >
+          Start
+        </button>
       </div>
-      {/* Chat History */}
       <div className="flex flex-col gap-4">
         <h1>Chat History</h1>
         <ul>
-          {sortedChatData.map((chat) => (
+          {sortedChatData.map((chat, index) => (
             <li
               className="flex flex-col gap-4 pb-4"
-              key={chat.uid}
-              onClick={() => useit(chat.uid)}
+              key={index}
+              onClick={() => setcurrChatData(chat)}
             >
-              <p className="">{chat.input_query}</p>
+              <p>
+                {chat.question_hist && chat.question_hist.length > 0
+                  && chat.question_hist[1]}
+              </p>
               <hr className="border-stone-900" />
             </li>
           ))}

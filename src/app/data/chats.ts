@@ -1,4 +1,4 @@
-const chatdata = [
+export const chatdata = [
     {
       uid: "user123",
       file_hash: "filehash12345",
@@ -11,7 +11,8 @@ const chatdata = [
         "The capital of France is Paris.",
         "French cuisine is known for its elegance and variety, featuring dishes such as croissants, escargot, and coq au vin.",
       ],
-      timestamp: "2024-11-16T10:15:00Z", // ISO 8601 format
+      timestamp: "2024-11-16T10:15:00Z", // ISO 8601 format,
+      inuse: false
     },
     {
       uid: "user456",
@@ -26,6 +27,7 @@ const chatdata = [
         "Inertia is the property of an object to resist changes in its state of motion or rest.",
       ],
       timestamp: "2024-11-15T14:45:00Z",
+      inuse: false
     },
     {
       uid: "user789",
@@ -40,6 +42,7 @@ const chatdata = [
         "It is recommended to meditate daily, even for just 10-20 minutes.",
       ],
       timestamp: "2024-11-16T08:30:00Z",
+      inuse: false
     },
   ];
   
