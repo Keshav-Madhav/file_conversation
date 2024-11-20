@@ -7,27 +7,23 @@ import { collection, query, where, getDocs, updateDoc } from "firebase/firestore
 import { getFirestore } from "firebase/firestore";
 import { app } from "@/firebase";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const db = getFirestore(app);
 
-interface ChatData {
-  id: string;
-  file_hash: string;
-  input_query: string;
-  question_hist: string[];
-  answer_hist: string[];
-  timestamp: string;
-  inuse: boolean;
-}
-
 export function PlaceholdersAndVanishInputDemo({
   currChatData,
+  setCurrChatData,
 }: {
-  currChatData: ChatData | undefined;
+  currChatData: ChatData;
+  setCurrChatData: React.Dispatch<React.SetStateAction<ChatData | undefined>>;
 }) {
+  const router = useRouter();
   const [currQuestion, setCurrQuestion] = useState("");
   const { user } = useUser();
-  const uid = user?.id || "No UID found";
+  if (!user) {
+    router.push("/");
+  }
 
   const placeholders = [
     "Can you summarize this document?",
@@ -36,10 +32,6 @@ export function PlaceholdersAndVanishInputDemo({
     "Create a summary of the first paragraph.",
     "List the key points of the document.",
   ];
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrQuestion(e.target.value);
-  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,25 +62,30 @@ export function PlaceholdersAndVanishInputDemo({
         question_hist: newQuestionHist,
       });
 
+      setCurrChatData((prev) => ({ ...prev!, question_hist: newQuestionHist }));
+
       // Call API
       const response = await askQuestionAPI(
-        "DwxQP1aK7XbJKtFnzjaJ",
-        uid,
+        currChatData.file_hash,
+        user!.id,
         currQuestion,
         currChatData.question_hist || [],
         currChatData.answer_hist || []
       );
 
+      let newAnswerHist;
       if (response.status === 200) {
-        const newAnswerHist = [...(currChatData.answer_hist || []), response.data.answer];
-        await updateDoc(docRef, {
-          answer_hist: newAnswerHist,
-        });
-
-        setCurrQuestion("");
+        newAnswerHist = [...(currChatData.answer_hist || []), response.data.answer];
       } else {
-        console.error("API call failed with status:", response.status);
+        newAnswerHist = [...(currChatData.answer_hist || []), "Error in fetching answer."];
       }
+      await updateDoc(docRef, {
+        answer_hist: newAnswerHist,
+      });
+
+      setCurrChatData((prev) => ({ ...prev!, answer_hist: newAnswerHist }));
+
+      setCurrQuestion("");
     } catch (error) {
       console.error("Error in onSubmit:", error);
     }
@@ -98,7 +95,7 @@ export function PlaceholdersAndVanishInputDemo({
     <div className="h-fit w-full flex flex-col justify-center items-center">
       <PlaceholdersAndVanishInput
         placeholders={placeholders}
-        onChange={handleChange}
+        onChange={(e) => setCurrQuestion(e.target.value)}
         onSubmit={onSubmit}
       />
     </div>

@@ -21,12 +21,11 @@ const page = () => {
     const userobject = {
       email: {email},
       clerkuid: {uid},
-      chats: [],
     };
 
     try {
       const docRef = doc(db, "userdata",uid); 
-      await setDoc(docRef, userobject);
+      await setDoc(docRef, userobject, {merge: true});
     } catch (error) {
       console.error("Error adding data:", error);
     }

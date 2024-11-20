@@ -2,26 +2,18 @@ import React from "react";
 import { PlaceholdersAndVanishInputDemo } from "./acceternitycomponents/PlaceholdersAndVanishInputDemo";
 import { FileUploadDemo } from "./acceternitycomponents/FileUploadDemo";
 
-interface ChatData {
-  id: string;
-  file_hash: string;
-  input_query: string;
-  question_hist: string[];
-  answer_hist: string[];
-  timestamp: string;
-  inuse: boolean;
-}
-
 const Chat = ({
   sortedChatData,
   setSortedChatData,
   setcurrChatData,
   currChatData,
+  currActiveFile
 }: {
   sortedChatData: ChatData[];
   setSortedChatData: React.Dispatch<React.SetStateAction<ChatData[]>>;
   setcurrChatData: React.Dispatch<React.SetStateAction<ChatData | undefined>>;
   currChatData: ChatData | undefined;
+  currActiveFile: FileData;
 }) => {
   return (
     <div
@@ -40,7 +32,10 @@ const Chat = ({
             />
           </div>
         ) : (
-          <div className="p-4 flex flex-col gap-4 overflow-y-scroll h-[80vh]">
+          <div className="p-4 flex flex-col gap-4 overflow-y-auto h-full">
+            <p className="text-center text-2xl font-bold sticky">
+              {currActiveFile.file_name}
+            </p>
             {currChatData.question_hist.map((qs, subindex) =>
               qs === "" ? null : (
                 <div key={subindex} className="flex flex-col gap-2">
@@ -62,10 +57,8 @@ const Chat = ({
           </div>
         )}
       </div>
-      <div className=" flex w-full justify-center gap-4 items-center h-[15%] p-4 ">
-        <div className="relative w-[100%] h-full flex items-center px-2 justify-center gap-4">
-          <PlaceholdersAndVanishInputDemo currChatData={currChatData} />
-        </div>
+      <div className="relative w-[100%] flex items-center p-4 justify-center gap-4">
+        {currChatData && <PlaceholdersAndVanishInputDemo currChatData={currChatData} setCurrChatData={setcurrChatData}/>}
       </div>
     </div>
   );

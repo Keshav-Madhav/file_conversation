@@ -3,97 +3,116 @@
 import React, { useEffect, useState } from "react";
 import Chat from "./Chat";
 import Chatsidebar from "./Chatsidebar";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { app } from "@/firebase";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const db = getFirestore(app);
 
-interface ChatData {
-  id: string;
-  file_hash: string;
-  input_query: string;
-  question_hist: string[];
-  answer_hist: string[];
-  timestamp: string;
-  inuse: boolean;
-}
-
 const Chatbot: React.FC = () => {
+  const router = useRouter();
+  const { user } = useUser();
   const [currChatData, setcurrChatData] = useState<ChatData | undefined>(undefined);
   const [chatdata, setChatdata] = useState<ChatData[]>([]);
-  const [sortedChatData, setSortedChatData] = useState<ChatData[]>([]);
-
-  // Fetch chat data from Firestore
-  const fetchChats = async () => {
-    try {
-      const docRef = collection(db, "chatdata");
-      const docSnap = await getDocs(docRef);
-
-      const firebaseData: ChatData[] = [];
-      docSnap.forEach((doc) => {
-        const data = doc.data();
-        
-        // Check if the object is not empty
-        if (Object.keys(data).length === 0) return;
-
-        const chatData = data as ChatData;
-        firebaseData.push(chatData);
-        console.log(chatData);
-      });
-
-      setChatdata(firebaseData);
-    } catch (error) {
-      console.error("Error fetching chat data:", error);
-    }
-  };
+  const [currActiveFile, setCurrActiveFile] = useState<FileData>({
+    file_id: "",
+    file_name: "",
+    file_path_relative: "",
+    file_path: "",
+  });
 
   useEffect(() => {
-    fetchChats();
-  }, []);
-
-  // Sort chat data whenever `chatdata` changes
-  useEffect(() => {
-    if (chatdata && chatdata.length > 0) {
-      const sortedData = [...chatdata].sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
-      setSortedChatData(sortedData);
+    if (!user) {
+      router.push("/");
+      return;
     }
-  }, [chatdata]);
+
+    const fetchChats = async () => {
+      try {
+        const userRef = doc(db, "userdata", user.id);
+        const userDocSnap = await getDoc(userRef);
+
+        const userData = userDocSnap.data();
+        console.log("User data:", userData);
+        const userChats = userData?.chats || [];
+
+        const chatDataPromises = userChats.map(async (chatId: string) => {
+          const chatDocRef = doc(db, "chatdata", chatId);
+          const chatDocSnap = await getDoc(chatDocRef);
+
+          if (chatDocSnap.exists()) {
+            return { id: chatId, ...chatDocSnap.data() } as ChatData;
+          }
+          return null;
+        });
+
+        const fetchedChats = await Promise.all(chatDataPromises);
+        const validChats = fetchedChats.filter((chat) => chat !== null) as ChatData[];
+
+        validChats.sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+
+        setChatdata(validChats);
+      } catch (error) {
+        console.error("Error fetching chat data:", error);
+      }
+    };
+
+    setTimeout(() => {
+      fetchChats();
+    }, 1000);
+  }, [user, router]);
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      if (currChatData) {
+        const fileDocRef = doc(db, "files", currChatData.file_hash);
+        const fileDocSnap = await getDoc(fileDocRef);
+
+        if (fileDocSnap.exists()) {
+          const fileData = fileDocSnap.data();
+          setCurrActiveFile({
+            file_id: currChatData.file_hash,
+            file_name: fileData.file_name,
+            file_path_relative: fileData.file_path_relative,
+            file_path: fileData.file_path,
+          });
+        }
+      }
+    };
+
+    fetchFile();
+  }, [currChatData]);
 
   return (
     <div className="h-screen w-full flex gap-5 justify-center items-center p-8 ">
       <div
-        className={`overflow-scroll overflow-x-hidden w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4`}
+        className={`overflow-auto overflow-x-hidden w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4`}
       >
-        {sortedChatData.length > 0 ? (
-          <Chatsidebar
-            sortedChatData={sortedChatData}
-            setcurrChatData={setcurrChatData}
-          />
-        ) : (
-          <p>No chats available</p>
-        )}
-      </div>
-      {sortedChatData.length > 0 && (
-        <Chat
-          sortedChatData={sortedChatData}
-          setSortedChatData={setSortedChatData}
+        <Chatsidebar
+          sortedChatData={chatdata}
           setcurrChatData={setcurrChatData}
-          currChatData={currChatData}
         />
-      )}
+      </div>
+      <Chat
+        sortedChatData={chatdata}
+        setSortedChatData={setChatdata}
+        setcurrChatData={setcurrChatData}
+        currChatData={currChatData}
+        currActiveFile={currActiveFile}
+      />
       <div
         className={`${
           currChatData === undefined ? "hidden" : "w-[40%]"
         } h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
       >
-        <div className="h-full w-full overflow-y-scroll scroll-2">
+        <div className="h-full w-full overflow-y-auto scroll-2">
           <iframe
             className="h-full w-full rounded-lg border-0"
             title="PDF Viewer"
-            src="C:/Users/kartik/Downloads/Untitled%20document%20(3).pdf"
+            src={currActiveFile.file_path_relative + "#toolbar=0"}
           ></iframe>
         </div>
       </div>
