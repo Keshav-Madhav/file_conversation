@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./style.css";
 import { ClerkLoaded, ClerkProvider } from "@clerk/nextjs";
-import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +18,6 @@ export default function RootLayout({
       <html lang="en">
         <body className={`antialiased`}>
           <ClerkLoaded>
-            <Header />
             {children}
           </ClerkLoaded>
         </body>

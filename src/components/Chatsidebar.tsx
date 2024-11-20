@@ -1,4 +1,5 @@
 import React from "react";
+import Header from "./Header";
 
 const Chatsidebar = ({
   setcurrChatData,
@@ -9,6 +10,7 @@ const Chatsidebar = ({
 }) => {
   return (
     <div className="flex flex-col gap-8">
+      <Header />
       <div className="flex flex-col gap-4">
         <h1>Start New Chat</h1>
         <button

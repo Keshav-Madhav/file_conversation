@@ -88,3 +88,25 @@ p{
   border-radius: 25px;
   padding: 5px 25px;
 }
+
+::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+  cursor: pointer;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555; /* Color of the scrollbar handle */
+  border-radius: 5px; /* Rounded corners on the scrollbar handle */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #999; /* Color of the scrollbar handle on hover */
+  cursor: pointer;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent; /* Color of the track */
+}

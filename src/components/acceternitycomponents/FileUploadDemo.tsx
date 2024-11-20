@@ -64,13 +64,13 @@ export function FileUploadDemo({
 
   const uid = user?.id || "Nan";
 
-  const addChatData = async (fileId: string) => {
+  const addChatData = async (fileId: string, file_name: string) => {
     const chatData = {
       id: uuidv4(),
       file_hash: fileId,
       input_query: "",
       question_hist: [""],
-      answer_hist: [""],
+      answer_hist: ["Welcome to FileConvo! Ask me anything about " + file_name +". I will do my best to help you."],
       timestamp: new Date().toISOString(),
     };
 
@@ -123,7 +123,7 @@ export function FileUploadDemo({
           file_path: paths.filePath,
         });
 
-        const chat = await addChatData(fileId);
+        const chat = await addChatData(fileId, file.name);
         if (!chat) return;
 
         setcurrChatData(chat);
