@@ -33,6 +33,12 @@ const getFilePaths = (file: File): FilePathResult => {
         relativeFilePath: "Ecotourism and Environmental Law - Keshav.pdf",
       };
 
+    case "Embedded_System_IOT_LabManual.pdf":
+      return {
+        filePath: "D:/Programming Projects/Personal/file_conversation/public/Embedded_System_IOT_LabManual.pdf",
+        relativeFilePath: "Embedded_System_IOT_LabManual.pdf",
+      };
+
     default:
       return {
         filePath: "/files/documents/document.pdf",
