@@ -12,14 +12,13 @@ const Chatsidebar = ({
     <div className="flex flex-col gap-8">
       <Header />
       <div className="flex flex-col gap-4">
-        <h1>Start New Chat</h1>
         <button
           className="grey_btn"
           onClick={() => {
             setcurrChatData(undefined);
           }}
         >
-          Start
+          Talk To New File
         </button>
       </div>
       <div className="flex flex-col gap-4">
