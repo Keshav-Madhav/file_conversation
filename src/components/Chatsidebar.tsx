@@ -34,7 +34,7 @@ const Chatsidebar = ({
               >
                 <p>
                   {chat.question_hist && chat.question_hist.length > 0
-                    && chat.question_hist[1] || "New Untitled Chat"}
+                    && chat.question_hist[0] || "New Untitled Chat"}
                 </p>
                 <hr className="border-stone-900" />
               </li>

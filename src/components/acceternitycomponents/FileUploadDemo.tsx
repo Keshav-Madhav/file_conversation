@@ -75,7 +75,7 @@ export function FileUploadDemo({
       id: uuidv4(),
       file_hash: fileId,
       input_query: "",
-      question_hist: [""],
+      question_hist: [file_name],
       answer_hist: ["Welcome to FileConvo! Ask me anything about " + file_name +". I will do my best to help you."],
       timestamp: new Date().toISOString(),
     };

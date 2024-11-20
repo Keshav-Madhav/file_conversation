@@ -87,9 +87,9 @@ const Chat = ({
             {currChatData.question_hist.map((qs, subindex) => (
               <div key={subindex} className="flex flex-col gap-2">
                 {/* Question */}
-                {qs === "" ? null : (
-                  <div className="max-w-[80%] w-fit flex justify-end self-end">
-                    <div className="bg-neutral-400/50 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
+                {qs === "" || subindex === 0 ? null : (
+                  <div className="max-w-[80%] w-fit flex justify-end self-end mr-2">
+                    <div className="bg-neutral-400/10 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeRaw]}
@@ -105,7 +105,7 @@ const Chat = ({
                 {/* Answer */}
                 {currChatData.answer_hist[subindex] === "" ? null : (
                   <div className="max-w-[80%] w-fit flex justify-start">
-                    <div className="bg-neutral-400/50 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
+                    <div className="bg-neutral-400/30 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeRaw]}
@@ -126,6 +126,7 @@ const Chat = ({
               <PlaceholdersAndVanishInputDemo
                 currChatData={currChatData}
                 setCurrChatData={setcurrChatData}
+                setSortedChatData={setSortedChatData}
               />
             )}
           </div>

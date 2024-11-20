@@ -14,9 +14,11 @@ const db = getFirestore(app);
 export function PlaceholdersAndVanishInputDemo({
   currChatData,
   setCurrChatData,
+  setSortedChatData
 }: {
   currChatData: ChatData;
   setCurrChatData: React.Dispatch<React.SetStateAction<ChatData | undefined>>;
+  setSortedChatData: React.Dispatch<React.SetStateAction<ChatData[]>>;
 }) {
   const router = useRouter();
   const [currQuestion, setCurrQuestion] = useState("");
@@ -60,6 +62,7 @@ export function PlaceholdersAndVanishInputDemo({
       await updateDoc(docRef, {
         input_query: currQuestion,
         question_hist: newQuestionHist,
+        timestamp: new Date().toISOString(),
       });
 
       setCurrChatData((prev) => ({ ...prev!, question_hist: newQuestionHist }));
@@ -84,6 +87,23 @@ export function PlaceholdersAndVanishInputDemo({
       });
 
       setCurrChatData((prev) => ({ ...prev!, answer_hist: newAnswerHist }));
+
+      setSortedChatData((prev) => {
+        const index = prev.findIndex((chat) => chat.id === currChatData.id);
+        if (index === -1) {
+          console.error("No matching chat found in sorted chat data.");
+          return prev;
+        }
+
+        const newSortedChatData = [...prev];
+        newSortedChatData[index] = { ...currChatData, answer_hist: newAnswerHist, question_hist: newQuestionHist, timestamp: new Date().toISOString() };
+
+        newSortedChatData.sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+
+        return newSortedChatData;
+      });
 
       setCurrQuestion("");
     } catch (error) {
