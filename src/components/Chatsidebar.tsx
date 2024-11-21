@@ -15,14 +15,10 @@ const Chatsidebar = ({
       <div className="flex justify-between flex-col h-full">
       <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
-        <button
-          className="text-white rounded-full p-2 flex gap-4 "
-        >
-          <Link href="/">
-            <IconLayoutGrid  className="text-teal-400"/>
-            Explore Us
-          </Link>
-        </button>
+        <Link href="/" className="text-white rounded-full p-2 flex gap-4 ">
+          <IconLayoutGrid  className="text-teal-400"/>
+          Explore Us
+        </Link>
         <button
           className="text-white rounded-full p-2 flex gap-4 "
           onClick={() => {

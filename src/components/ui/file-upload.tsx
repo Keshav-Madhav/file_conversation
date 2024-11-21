@@ -181,8 +181,8 @@ export function GridPattern() {
               key={`${col}-${row}`}
               className={`w-10 h-10 flex flex-shrink-0 rounded-[2px] ${
                 index % 2 === 0
-                  ? "bg-neutral-950"
-                  : "bg-neutral-950 shadow-[0px_0px_1px_3px_rgba(0,0,0,1)_inset]"
+                  ? "bg-cyan-950/10"
+                  : "bg-zinc-950 shadow-[0px_0px_1px_3px_rgb(8,51,68,0.2)_inset]"
               }`}
             />
           );
