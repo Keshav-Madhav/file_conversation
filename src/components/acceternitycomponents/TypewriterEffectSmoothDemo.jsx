@@ -1,25 +1,35 @@
 "use client";
 import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
 export function TypewriterEffectSmoothDemo() {
-  const words = [
+  const firstheadingwords = [
     {
-      text: "Welcome",
+      text: "Transform",
     },
     {
-      text: "to",
+      text: "Your",
+    },
+    { text: "Documents" },
+    {
+      text: "into",
+    },
+  ];
+  const secondheadingwords = [
+    {
+      text: "Conversational",
+      className: "font-medium text-transparent bg-clip-text bg-gradient-to-b from-cyan-900 from-10% to-cyan-500 to-100%",
     },
     {
-      text: "MEDIFY",
-      className: "font-medium text-[#E4D486]",
-    },
-    {
-      text: "Chatbot!",
+      text: "Partners!",
     },
   ];
   return (
-    <div className="flex">
-      <TypewriterEffectSmooth words={words} />
-      
-    </div>
+    <>
+      <div className="flex text-wrap ">
+        <TypewriterEffectSmooth line="first" words={firstheadingwords} />
+      </div>
+      <div className="">
+        <TypewriterEffectSmooth line="second" words={secondheadingwords} />
+      </div>
+    </>
   );
 }

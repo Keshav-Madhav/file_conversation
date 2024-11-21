@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion, stagger, useAnimate, useInView } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const TypewriterEffect = ({
   words,
@@ -99,10 +99,12 @@ export const TypewriterEffect = ({
 };
 
 export const TypewriterEffectSmooth = ({
+  line,
   words,
   className,
   cursorClassName,
 }: {
+  line: string;
   words: {
     text: string;
     className?: string;
@@ -139,8 +141,20 @@ export const TypewriterEffectSmooth = ({
     );
   };
 
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    if (line === "first") {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000); // 3 seconds
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [line]);
+
   return (
-    <div className={cn("flex space-x-1 my-6", className)}>
+    <div className={cn("flex space-x-1", className)}>
       <motion.div
         className="overflow-hidden pb-2"
         initial={{
@@ -152,7 +166,7 @@ export const TypewriterEffectSmooth = ({
         transition={{
           duration: 2,
           ease: "linear",
-          delay: 1,
+          delay: line === "first" ? 1 : line === "second" ? 3 : 0,
         }}
       >
         <div
@@ -164,24 +178,26 @@ export const TypewriterEffectSmooth = ({
           {renderWords()}{" "}
         </div>{" "}
       </motion.div>
-      <motion.span
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
-        transition={{
-          duration: 0.8,
-
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-        className={cn(
-          "block rounded-sm w-[4px]  h-4 sm:h-6 xl:h-12 bg-blue-500",
-          cursorClassName
-        )}
-      ></motion.span>
+      
+      {line==="second" && isVisible && (
+        <motion.span
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          transition={{
+            duration: 0.8,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className={cn(
+            "block rounded-sm w-[4px] h-12 bg-blue-500",
+            cursorClassName
+          )}
+        ></motion.span>
+      )}
     </div>
   );
 };

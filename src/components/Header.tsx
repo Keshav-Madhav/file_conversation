@@ -1,37 +1,37 @@
-import React from 'react'
+import React from "react";
 import {
-    SignInButton,
-    SignedIn,
-    SignedOut,
-    UserButton,
-    useUser
-  } from '@clerk/nextjs'
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
+import Link from "next/link";
 
 const Header = () => {
-  const { user } = useUser()
   return (
-    <header className='flex '>
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
-      <SignedIn>
-        <div className='flex gap-4 items-center'>
-          <UserButton appearance={{
-            elements:{
-              userButtonAvatarBox:{
-                height: 50,
-                width: 50
-              }
-            }
-          }}/>
-          <div className='flex flex-col'>
-            <p className='text-[#ddd] text-lg font-semibold'>{user?.fullName || user?.emailAddresses[0].emailAddress}</p>
-            <p className='text-[#bbb] text-sm'>{user?.emailAddresses[0].emailAddress}</p>
-          </div>
+    <div className="sticky  z-50 px-20 w-full flex justify-between items-center border-b-[1px] border-[#5fc8d1] shadow-sm shadow-[#5fc8d1] p-4 gap-10">
+      {/* icon */}
+      <h1 className="text-[#5fc8d1] text-3xl">File Talker</h1>
+      <div className="flex gap-8">
+        {/* pages */}
+        <ul className="flex gap-8 items-center text-lg">
+          <li>
+            <Link href="/Chat">Chat</Link>
+          </li>
+          <li>
+            <Link href="/">Home</Link>
+          </li>
+        </ul>
+        {/* signin/profile */}
+        <div className="flex items-center">
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
-      </SignedIn>
-    </header>
-  )
-}
+      </div>
+    </div>
+  );
+};
 
-export default Header
+export default Header;

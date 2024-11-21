@@ -6,3 +6,13 @@ body {
 .border{
     border: 1px;
 }
+
+.cl-formButtonPrimary{
+  background-image: linear-gradient(#66dae3, #367d82);
+  border: none;
+  color: white;
+}
+
+.cl-internal-1dauvpw{
+  display: none;
+}

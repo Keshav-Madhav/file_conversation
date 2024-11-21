@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./Header";
+import ChatbotHeader from "./ChatbotHeader";
 
 const Chatsidebar = ({
   setcurrChatData,
@@ -10,10 +10,10 @@ const Chatsidebar = ({
 }) => {
   return (
     <div className="flex flex-col gap-8">
-      <Header />
+      <ChatbotHeader />
       <div className="flex flex-col gap-4">
         <button
-          className="grey_btn"
+          className="bg-gradient-to-b from-cyan-700 from-0% to-cyan-500 to-100% text-white rounded-full py-1"
           onClick={() => {
             setcurrChatData(undefined);
           }}

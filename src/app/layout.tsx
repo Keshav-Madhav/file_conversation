@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./style.css";
 import { ClerkLoaded, ClerkProvider } from "@clerk/nextjs";
+import { dark } from '@clerk/themes';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,7 +15,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{}}>
+    <ClerkProvider appearance={{
+      baseTheme: dark,
+    }}>
       <html lang="en">
         <body className={`antialiased`}>
           <ClerkLoaded>

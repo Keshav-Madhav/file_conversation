@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.3.4",
+    "@clerk/themes": "^2.1.45",
     "@tabler/icons-react": "^3.22.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
