@@ -67,7 +67,7 @@ const Chat = ({
     <div
       className={`${
         currChatData === undefined ? "w-[100%]" : "w-[50%]"
-      } h-full flex flex-col justify-between border-white/20 border-[0.5px] rounded-lg`}
+      } h-full flex flex-col justify-between border-white/20 border-[0.5px] rounded-lg bg-zinc-950`}
     >
       {currChatData === undefined ? (
         <div className="flex justify-center items-center w-full h-full">
@@ -89,7 +89,7 @@ const Chat = ({
                 {/* Question */}
                 {qs === "" || subindex === 0 ? null : (
                   <div className="max-w-[80%] w-fit flex justify-end self-end mr-2">
-                    <div className="bg-neutral-400/10 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
+                    <div className="bg-cyan-800/30 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeRaw]}
@@ -105,7 +105,7 @@ const Chat = ({
                 {/* Answer */}
                 {currChatData.answer_hist[subindex] === "" ? null : (
                   <div className="max-w-[80%] w-fit flex justify-start">
-                    <div className="bg-neutral-400/30 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
+                    <div className="bg-cyan-300/25 px-3 pt-1 rounded-lg border-white/20 border-[0.5px] w-full">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeRaw]}

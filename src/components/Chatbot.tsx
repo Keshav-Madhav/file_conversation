@@ -87,9 +87,9 @@ const Chatbot: React.FC = () => {
   }, [currChatData]);
 
   return (
-    <div className="h-screen w-full flex gap-5 justify-center items-center p-8 ">
+    <div className="h-screen w-full flex gap-5 justify-center items-center p-8 bg-gradient-to-b from-cyan-900/30 from-0% to-cyan-200/40 to-100%">
       <div
-        className={`overflow-auto overflow-x-hidden w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4`}
+        className={`overflow-auto overflow-x-hidden w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4 bg-zinc-950`}
       >
         <Chatsidebar
           sortedChatData={chatdata}
