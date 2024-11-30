@@ -27,19 +27,22 @@ const secondaryVariant = {
 
 export const FileUpload = ({
   onChange,
+  disabled = false,
 }: {
   onChange?: (files: File[]) => void;
+  disabled?: boolean;
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
+    if (disabled) return;
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     onChange && onChange(newFiles);
   };
 
   const handleClick = () => {
-    fileInputRef.current?.click();
+    if (!disabled) fileInputRef.current?.click();
   };
 
   const { getRootProps, isDragActive } = useDropzone({
@@ -49,33 +52,46 @@ export const FileUpload = ({
     onDropRejected: (error) => {
       console.log(error);
     },
+    disabled,
   });
 
   return (
-    <div className="w-full" {...getRootProps()}>
+    <div
+      className={cn("w-full", disabled && "cursor-not-allowed opacity-50")}
+      {...getRootProps()}
+    >
       <motion.div
         onClick={handleClick}
-        whileHover="animate"
+        whileHover={!disabled ? "animate" : undefined}
         className="p-10 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden"
       >
         <input
           ref={fileInputRef}
           id="file-upload-handle"
           type="file"
-          onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
+          onChange={(e) =>
+            handleFileChange(Array.from(e.target.files || []))
+          }
           className="hidden"
+          disabled={disabled}
         />
         <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]">
           <GridPattern />
         </div>
         <div className="flex flex-col items-center justify-center">
-          <p className="relative z-20 font-sans font-bold text-neutral-300 text-base">
-            Upload file
-          </p>
-          <p className="relative z-20 font-sans font-normal text-neutral-400 text-base mt-2">
-            Drag or drop your files here or click to upload
-          </p>
-          <div className="relative w-full mt-10 max-w-xl mx-auto">
+          {files.length ===0 && (
+            <>
+              <p className="relative z-20 font-sans font-bold text-neutral-300 text-base">
+                Upload file
+              </p>
+              <p className="relative z-20 font-sans font-normal text-neutral-400 text-base mt-2">
+                {disabled
+                  ? "Uploading is disabled"
+                  : "Drag or drop your files here or click to upload"}
+              </p>
+            </>
+          )}
+          <div className="relative w-full max-w-xl mx-auto">
             {files.length > 0 &&
               files.map((file, idx) => (
                 <motion.div

@@ -105,7 +105,7 @@ const Chatbot: React.FC = () => {
       />
       <div
         className={`${
-          currChatData === undefined ? "hidden" : "w-[40%]"
+          !currChatData ? "hidden" : "w-[40%]"
         } h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
       >
         <div className="h-full w-full overflow-y-auto scroll-2">

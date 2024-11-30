@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { FileUpload } from "@/components/ui/file-upload";
 import { getFirestore, doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
@@ -9,43 +9,9 @@ import createEmbeddingsForFileAPI from "@/lib/apis/createEmbbedingApi";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
+import { useUploadThing } from "@/lib/uploadThing";
 
 const db = getFirestore(app);
-
-interface FilePathResult {
-  filePath: string;
-  relativeFilePath: string;
-}
-
-const getFilePaths = (file: File): FilePathResult => {
-  const { name } = file;
-
-  switch (name) {
-    case "Front_End_Resume.pdf":
-      return {
-        filePath: "D:/Programming Projects/Personal/file_conversation/public/Front_End_Resume.pdf",
-        relativeFilePath: "Front_End_Resume.pdf",
-      };
-
-    case "Ecotourism and Environmental Law - Keshav.pdf":
-      return {
-        filePath: "D:/Programming Projects/Personal/file_conversation/public/Ecotourism and Environmental Law - Keshav.pdf",
-        relativeFilePath: "Ecotourism and Environmental Law - Keshav.pdf",
-      };
-
-    case "Embedded_System_IOT_LabManual.pdf":
-      return {
-        filePath: "D:/Programming Projects/Personal/file_conversation/public/Embedded_System_IOT_LabManual.pdf",
-        relativeFilePath: "Embedded_System_IOT_LabManual.pdf",
-      };
-
-    default:
-      return {
-        filePath: "/files/documents/document.pdf",
-        relativeFilePath: "./documents/document.pdf",
-      };
-  }
-};
 
 interface FileUploadDemoProps {
   sortedChatData: ChatData[];
@@ -59,8 +25,11 @@ export function FileUploadDemo({
   setSortedChatData,
   setcurrChatData,
 }: FileUploadDemoProps) {
+  const { startUpload } = useUploadThing("media")
   const router = useRouter();
   const { user } = useUser();
+  const [isUploading, setIsUploading] = useState(false);
+  const [isReading, setIsReading] = useState(false);
 
   React.useEffect(() => {
     if (!user) {
@@ -115,39 +84,68 @@ export function FileUploadDemo({
   };
 
   const handleFileUpload = async (file: File) => {
-    const paths = getFilePaths(file);
+    let filePath;
     const fileId = uuidv4();
 
     try {
-      const response = await createEmbeddingsForFileAPI(paths.filePath, fileId, uid);
-
-      if (response.status === 200) {
-        await setDoc(doc(db, "files", fileId), {
-          file_id: fileId,
-          file_name: file.name,
-          file_path_relative: paths.relativeFilePath,
-          file_path: paths.filePath,
-        });
-
-        const chat = await addChatData(fileId, file.name);
-        if (!chat) return;
-
-        setcurrChatData(chat);
-        await updateUserChatArray(chat.id);
-      } else {
-        console.error(
-          "Failed to create embeddings:",
-          response.data?.error || "Unknown error"
-        );
+      setIsUploading(true);
+      const fileResponse = await startUpload([file])
+      if(fileResponse){
+        console.log(fileResponse[0].url)
+        filePath = fileResponse[0].url
+        setIsUploading(false);
       }
     } catch (error) {
-      console.error("Error during file upload or embedding process:", error);
+      console.error("Error during file upload:", error);
+      setIsUploading(false);
+    }
+
+    if(filePath){
+      setIsReading(true);
+      try {
+        const response = await createEmbeddingsForFileAPI(filePath, fileId, uid);
+
+        if (response.status === 200) {
+          await setDoc(doc(db, "files", fileId), {
+            file_id: fileId,
+            file_name: file.name,
+            file_path_relative: filePath,
+            file_path: filePath,
+          });
+          setIsReading(false);
+
+          const chat = await addChatData(fileId, file.name);
+          if (!chat) return;
+
+          setcurrChatData(chat);
+          await updateUserChatArray(chat.id);
+        } else {
+          console.error(
+            "Failed to create embeddings:",
+            response.data?.error || "Unknown error"
+          );
+          setIsReading(false);
+        }
+      } catch (error) {
+        console.error("Error during file upload or embedding process:", error);
+        setIsReading(false);
+      }
     }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-black border-neutral-800 rounded-lg">
-      <FileUpload onChange={(files) => handleFileUpload(files[0])} />
+    <div className="relative w-full max-w-4xl mx-auto border border-dashed bg-black border-neutral-800 rounded-lg">
+      <FileUpload onChange={(files) => handleFileUpload(files[0])} disabled={isReading || isUploading} />
+      {isUploading && (
+        <div className="absolute z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+          <p className="text-white text-lg">Uploading file...</p>
+        </div>
+      )}
+      {isReading && (
+        <div className="absolute z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+          <p className="text-white text-lg ">Reading file...</p>
+        </div>
+      )}
     </div>
   );
 }
