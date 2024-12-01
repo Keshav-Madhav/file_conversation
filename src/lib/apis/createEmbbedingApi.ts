@@ -1,11 +1,13 @@
 export default async function createEmbeddingsForFileAPI(
   file_path: string,
   file_hash: string,
+  file_type: string,
   username: string
 ) {
   const requestBody = {
     file_path,
     file_hash,
+    file_type,
     username,
   };
 

@@ -103,7 +103,7 @@ export function FileUploadDemo({
     if(filePath){
       setIsReading(true);
       try {
-        const response = await createEmbeddingsForFileAPI(filePath, fileId, uid);
+        const response = await createEmbeddingsForFileAPI(filePath, fileId, file.type, uid);
 
         if (response.status === 200) {
           await setDoc(doc(db, "files", fileId), {
