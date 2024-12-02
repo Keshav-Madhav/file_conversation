@@ -40,12 +40,21 @@ export function FileUploadDemo({
   const uid = user?.id || "Nan";
 
   const addChatData = async (fileId: string, file_name: string) => {
+    const supportedExtensions = ["pdf", "png", "jpeg", "jpg"];
+    const fileExtension = file_name.split(".").pop()?.toLowerCase() ?? "";
+
     const chatData = {
       id: uuidv4(),
       file_hash: fileId,
       input_query: "",
       question_hist: [file_name],
-      answer_hist: ["Welcome to FileConvo! Ask me anything about " + file_name +". I will do my best to help you."],
+      answer_hist: [
+        `Welcome to FileConvo! Ask me anything about **${file_name}**. I will do my best to help you.${
+          !supportedExtensions.includes(fileExtension)
+            ? "\n\n_**Note:** I will be unable to display the file to you while we chat. Even though I can read the file, I cannot display it yet._"
+            : ""
+        }`,
+      ],
       timestamp: new Date().toISOString(),
     };
 

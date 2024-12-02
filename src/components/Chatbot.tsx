@@ -7,6 +7,7 @@ import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { app } from "@/firebase";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import FileDisplay from "./FileDisplay";
 
 const db = getFirestore(app);
 
@@ -89,7 +90,7 @@ const Chatbot: React.FC = () => {
   return (
     <div className="h-screen w-full flex gap-5 justify-center items-center p-8 bg-gradient-to-b from-cyan-900/30 from-0% to-cyan-200/40 to-100%">
       <div
-        className={`overflow-auto overflow-x-hidden w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4 bg-zinc-950`}
+        className={`overflow-auto overflow-x-hidden min-w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4 bg-zinc-950`}
       >
         <Chatsidebar
           sortedChatData={chatdata}
@@ -103,19 +104,7 @@ const Chatbot: React.FC = () => {
         currChatData={currChatData}
         currActiveFile={currActiveFile}
       />
-      <div
-        className={`${
-          !currChatData ? "hidden" : "w-[40%]"
-        } h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
-      >
-        <div className="h-full w-full overflow-y-auto scroll-2">
-          <iframe
-            className="h-full w-full rounded-lg border-0"
-            title="PDF Viewer"
-            src={currActiveFile.file_path_relative + "#toolbar=0"}
-          ></iframe>
-        </div>
-      </div>
+      <FileDisplay currChatData={currChatData} currActiveFile={currActiveFile} />
     </div>
   );
 };

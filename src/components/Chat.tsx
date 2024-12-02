@@ -66,7 +66,7 @@ const Chat = ({
   return (
     <div
       className={`${
-        currChatData === undefined ? "w-[100%]" : "w-[50%]"
+        currChatData === undefined ? "w-[100%]" : "w-[70%]"
       } h-full flex flex-col justify-between border-white/20 border-[0.5px] rounded-lg bg-zinc-950`}
     >
       {currChatData === undefined ? (
