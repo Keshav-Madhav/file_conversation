@@ -144,7 +144,7 @@ export function FileUploadDemo({
 
   return (
     <div className="relative w-full max-w-4xl mx-auto border border-dashed bg-black border-neutral-800 rounded-lg">
-      <FileUpload onChange={(files) => handleFileUpload(files[0])} disabled={isReading || isUploading} />
+      <FileUpload onChange={(file) => handleFileUpload(file)} disabled={isReading || isUploading} />
       {isUploading && (
         <div className="absolute z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
           <p className="text-white text-lg">Uploading file...</p>

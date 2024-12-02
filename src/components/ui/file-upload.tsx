@@ -29,16 +29,16 @@ export const FileUpload = ({
   onChange,
   disabled = false,
 }: {
-  onChange?: (files: File[]) => void;
+  onChange?: (file: File) => void;
   disabled?: boolean;
 }) => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [file, setFile] = useState<File>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (newFiles: File[]) => {
-    if (disabled) return;
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onChange && onChange(newFiles);
+  const handleFileChange = (newFile: File | undefined) => {
+    if (disabled || !newFile) return;
+    setFile(newFile);
+    if(onChange) onChange(newFile);
   };
 
   const handleClick = () => {
@@ -48,7 +48,7 @@ export const FileUpload = ({
   const { getRootProps, isDragActive } = useDropzone({
     multiple: false,
     noClick: true,
-    onDrop: handleFileChange,
+    onDrop: (acceptedFiles) => handleFileChange(acceptedFiles[0]),
     onDropRejected: (error) => {
       console.log(error);
     },
@@ -70,7 +70,7 @@ export const FileUpload = ({
           id="file-upload-handle"
           type="file"
           onChange={(e) =>
-            handleFileChange(Array.from(e.target.files || []))
+            handleFileChange(e.target.files ? e.target.files[0] : undefined)
           }
           className="hidden"
           disabled={disabled}
@@ -79,7 +79,7 @@ export const FileUpload = ({
           <GridPattern />
         </div>
         <div className="flex flex-col items-center justify-center">
-          {files.length ===0 && (
+          {!file && (
             <>
               <p className="relative z-20 font-sans font-bold text-neutral-300 text-base">
                 Upload file
@@ -92,57 +92,55 @@ export const FileUpload = ({
             </>
           )}
           <div className="relative w-full max-w-xl mx-auto">
-            {files.length > 0 &&
-              files.map((file, idx) => (
-                <motion.div
-                  key={"file" + idx}
-                  layoutId={idx === 0 ? "file-upload" : "file-upload-" + idx}
-                  className={cn(
-                    "relative overflow-hidden z-40 bg-neutral-900 flex flex-col items-start justify-start md:h-24 p-4 mt-4 w-full mx-auto rounded-md",
-                    "shadow-sm"
-                  )}
-                >
-                  <div className="flex justify-between w-full items-center gap-4">
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      layout
-                      className="text-base text-neutral-300 truncate max-w-xs"
-                    >
-                      {file.name}
-                    </motion.p>
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      layout
-                      className="rounded-lg px-2 py-1 w-fit flex-shrink-0 text-sm text-white shadow-input"
-                    >
-                      {(file.size / (1024 * 1024)).toFixed(2)} MB
-                    </motion.p>
-                  </div>
+            {file &&
+              <motion.div
+                layoutId="file-upload"
+                className={cn(
+                  "relative overflow-hidden z-40 bg-neutral-900 flex flex-col items-start justify-start md:h-24 p-4 mt-4 w-full mx-auto rounded-md",
+                  "shadow-sm"
+                )}
+              >
+                <div className="flex justify-between w-full items-center gap-4">
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    layout
+                    className="text-base text-neutral-300 truncate max-w-xs"
+                  >
+                    {file.name}
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    layout
+                    className="rounded-lg px-2 py-1 w-fit flex-shrink-0 text-sm text-white shadow-input"
+                  >
+                    {(file.size / (1024 * 1024)).toFixed(2)} MB
+                  </motion.p>
+                </div>
 
-                  <div className="flex text-sm md:flex-row flex-col items-start md:items-center w-full mt-2 justify-between text-neutral-400">
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      layout
-                      className="px-1 py-0.5 rounded-md bg-neutral-800 "
-                    >
-                      {file.type}
-                    </motion.p>
+                <div className="flex text-sm md:flex-row flex-col items-start md:items-center w-full mt-2 justify-between text-neutral-400">
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    layout
+                    className="px-1 py-0.5 rounded-md bg-neutral-800 truncate w-[60%]"
+                  >
+                    {file.type}
+                  </motion.p>
 
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      layout
-                    >
-                      modified{" "}
-                      {new Date(file.lastModified).toLocaleDateString()}
-                    </motion.p>
-                  </div>
-                </motion.div>
-              ))}
-            {!files.length && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    layout
+                  >
+                    modified{" "}
+                    {new Date(file.lastModified).toLocaleDateString()}
+                  </motion.p>
+                </div>
+              </motion.div>
+            }
+            {!file && (
               <motion.div
                 layoutId="file-upload"
                 variants={mainVariant}
@@ -171,7 +169,7 @@ export const FileUpload = ({
               </motion.div>
             )}
 
-            {!files.length && (
+            {!file && (
               <motion.div
                 variants={secondaryVariant}
                 className="absolute opacity-0 !border border-dashed border-sky-400 inset-0 z-30 bg-transparent flex items-center justify-center h-32 mt-4 w-full max-w-[8rem] mx-auto rounded-md"
