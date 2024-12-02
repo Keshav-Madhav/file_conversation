@@ -2,7 +2,6 @@ import React from "react";
 import ChatbotHeader from "./ChatbotHeader";
 import {
   IconFileSpark,
-  IconHistory,
   IconLayoutGrid,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -21,13 +20,13 @@ const Chatsidebar = ({
           <div className="flex flex-col gap-4">
             <Link
               href="/"
-              className="text-white text-xl py-1 flex gap-4 justify-start"
+              className="text-white text-lg py-1 flex gap-4 justify-start"
             >
               <IconLayoutGrid className="text-teal-600  h-7 w-7" />
               Explore Us
             </Link>
             <button
-              className="text-white text-xl py-1 flex gap-4 justify-start"
+              className="text-white text-lg py-1 flex gap-4 justify-start"
               onClick={() => {
                 setcurrChatData(undefined);
               }}
@@ -37,8 +36,8 @@ const Chatsidebar = ({
             </button>
           </div>
           <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-normal flex gap-4">
-              <IconHistory className="text-teal-600 h-7 w-7" />
+            <h1 className="text-lg font-normal flex gap-4">
+              {/* <IconHistory className="text-teal-600 h-7 w-7" /> */}
               Chat History
             </h1>
             {sortedChatData.length > 0 ? (

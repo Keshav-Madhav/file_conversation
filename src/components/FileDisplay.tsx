@@ -29,7 +29,7 @@ const FileDisplay = ({ currChatData, currActiveFile }: props) => {
 
   return (
     <div
-      className={`min-w-[35%] max-w-[35%] h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
+      className={`w-full h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
     >
       <div className="h-full w-full overflow-y-auto scroll-2">
         {isImageFile() ? (

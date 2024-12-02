@@ -110,14 +110,55 @@ const Chatbot: React.FC = () => {
           setcurrChatData={setcurrChatData}
         />
       </div>
-      <Chat
-        sortedChatData={chatdata}
-        setSortedChatData={setChatdata}
-        setcurrChatData={setcurrChatData}
-        currChatData={currChatData}
-        currActiveFile={currActiveFile}
-      />
-      <FileDisplay currChatData={currChatData} currActiveFile={currActiveFile} />
+      <div
+        className={`${
+          currChatData === undefined
+            ? "w-[100%]"
+            : isDocOpen
+            ? "w-[50%]"
+            : "w-full"
+        } h-full flex flex-col relative justify-between border-white/20 border-[0.5px] rounded-lg bg-[#070707] `}
+      >
+        <Chat
+          sortedChatData={chatdata}
+          setSortedChatData={setChatdata}
+          setcurrChatData={setcurrChatData}
+          currChatData={currChatData}
+          currActiveFile={currActiveFile}
+        />
+        {!isDocOpen && (
+          <IconChevronLeft
+          className="absolute z-40 top-0 right-0 m-4"
+            onClick={() => {
+              setDocOpen(true);
+            }}
+            strokeWidth="1px"
+          />
+        )}
+      </div>
+
+      <div
+        className={`${
+          !currChatData
+            ? "hidden"
+            : isDocOpen
+            ? "w-[40%]"
+            : "hidden"
+        } h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
+      >
+        {isDocOpen && (
+          <div className=" relative h-full w-full overflow-y-auto scroll-2">
+            <IconChevronRight
+              className="absolute bg-[#070707] rounded-br-lg h-10 w-10 p-2 rounded-tl-lg"
+              strokeWidth="1px"
+              onClick={() => {
+                setDocOpen(false);
+              }}
+            />
+            <FileDisplay currChatData={currChatData} currActiveFile={currActiveFile} />
+          </div>
+        )}
+        </div>
     </div>
   );
 };

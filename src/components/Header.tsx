@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 const Header = () => {
@@ -14,7 +9,7 @@ const Header = () => {
       <h1 className="text-[#5fc8d1] text-3xl">FileConvo</h1>
       <div className="flex gap-8">
         {/* pages */}
-        <ul className="flex gap-8 items-center text-lg">
+        <ul className="flex gap-8 items-center text-xl">
           <li>
             <Link href="/Chat">Chat</Link>
           </li>
@@ -25,10 +20,19 @@ const Header = () => {
         {/* signin/profile */}
         <div className="flex items-center">
           <SignedIn>
-            <UserButton />
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: {
+                    height: 50,
+                    width: 50,
+                  },
+                },
+              }}
+            />
           </SignedIn>
           <SignedOut>
-            <SignInButton />
+            <SignInButton/>
           </SignedOut>
         </div>
       </div>

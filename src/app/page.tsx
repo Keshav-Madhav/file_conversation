@@ -1,6 +1,7 @@
 import Feature from "@/components/Feature";
 import Header from "@/components/Header";
 import Start from "@/components/Start";
+import Contactus from "@/components/Contactus";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Header />
         <Start />
         <Feature />
+        <Contactus />
       </div>
     </div>
   );
