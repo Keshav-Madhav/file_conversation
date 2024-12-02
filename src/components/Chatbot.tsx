@@ -14,6 +14,7 @@ import {
   IconCircleX,
   IconX,
 } from "@tabler/icons-react";
+import FileDisplay from "./FileDisplay";
 
 const db = getFirestore(app);
 
@@ -102,66 +103,21 @@ const Chatbot: React.FC = () => {
   return (
     <div className="h-screen w-full flex gap-5 justify-center items-center p-8 bg-gradient-to-b from-black from-0% via-cyan-900/10 via-50% to-cyan-200/10 to-100%">
       <div
-        className={`overflow-auto overflow-x-hidden w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4 bg-[#070707]`}
+        className={`overflow-auto overflow-x-hidden min-w-[20%] h-full border-white/20 border-[0.5px] rounded-lg p-4 bg-[#070707]`}
       >
         <Chatsidebar
           sortedChatData={chatdata}
           setcurrChatData={setcurrChatData}
         />
       </div>
-      <div
-        className={`${
-          currChatData === undefined
-            ? "w-[100%]"
-            : isDocOpen
-            ? "w-[50%]"
-            : "w-full"
-        } h-full flex flex-col relative justify-between border-white/20 border-[0.5px] rounded-lg bg-[#070707] `}
-      >
-        <Chat
-          sortedChatData={chatdata}
-          setSortedChatData={setChatdata}
-          setcurrChatData={setcurrChatData}
-          currChatData={currChatData}
-          currActiveFile={currActiveFile}
-        />
-        {!isDocOpen && (
-          <IconChevronLeft
-          className="absolute z-40 top-0 right-0 m-4"
-            onClick={() => {
-              setDocOpen(true);
-            }}
-            strokeWidth="1px"
-          />
-        )}
-      </div>
-
-      <div
-        className={`${
-          !currChatData
-            ? "hidden"
-            : isDocOpen
-            ? "w-[40%]"
-            : "hidden"
-        } h-full flex flex-col border-white/20 bg-stone-100/2 border-[0.5px] rounded-lg`}
-      >
-        {isDocOpen && (
-          <div className=" relative h-full w-full overflow-y-auto scroll-2">
-            <IconChevronRight
-              className="absolute bg-[#070707] rounded-br-lg h-10 w-10 p-2 rounded-tl-lg"
-              strokeWidth="1px"
-              onClick={() => {
-                setDocOpen(false);
-              }}
-            />
-            <iframe
-              className="h-full w-full rounded-lg border-0"
-              title="PDF Viewer"
-              src={currActiveFile.file_path_relative + "#toolbar=0"}
-            ></iframe>
-          </div>
-        )}
-      </div>
+      <Chat
+        sortedChatData={chatdata}
+        setSortedChatData={setChatdata}
+        setcurrChatData={setcurrChatData}
+        currChatData={currChatData}
+        currActiveFile={currActiveFile}
+      />
+      <FileDisplay currChatData={currChatData} currActiveFile={currActiveFile} />
     </div>
   );
 };

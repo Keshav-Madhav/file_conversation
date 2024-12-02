@@ -40,12 +40,21 @@ export function FileUploadDemo({
   const uid = user?.id || "Nan";
 
   const addChatData = async (fileId: string, file_name: string) => {
+    const supportedExtensions = ["pdf", "png", "jpeg", "jpg"];
+    const fileExtension = file_name.split(".").pop()?.toLowerCase() ?? "";
+
     const chatData = {
       id: uuidv4(),
       file_hash: fileId,
       input_query: "",
       question_hist: [file_name],
-      answer_hist: ["Welcome to FileConvo! Ask me anything about " + file_name +". I will do my best to help you."],
+      answer_hist: [
+        `Welcome to FileConvo! Ask me anything about **${file_name}**. I will do my best to help you.${
+          !supportedExtensions.includes(fileExtension)
+            ? "\n\n_**Note:** I will be unable to display the file to you while we chat. Even though I can read the file, I cannot display it yet._"
+            : ""
+        }`,
+      ],
       timestamp: new Date().toISOString(),
     };
 
@@ -135,7 +144,7 @@ export function FileUploadDemo({
 
   return (
     <div className="relative w-full max-w-4xl mx-auto border border-dashed bg-black border-neutral-800 rounded-lg">
-      <FileUpload onChange={(files) => handleFileUpload(files[0])} disabled={isReading || isUploading} />
+      <FileUpload onChange={(file) => handleFileUpload(file)} disabled={isReading || isUploading} />
       {isUploading && (
         <div className="absolute z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
           <p className="text-white text-lg">Uploading file...</p>
