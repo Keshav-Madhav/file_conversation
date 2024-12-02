@@ -64,11 +64,7 @@ const Chat = ({
   };
 
   return (
-    <div
-      className={`${
-        currChatData === undefined ? "w-[100%]" : "w-[50%]"
-      } h-full flex flex-col justify-between border-white/20 border-[0.5px] rounded-lg bg-zinc-950`}
-    >
+    <>
       {currChatData === undefined ? (
         <div className="flex justify-center items-center w-full h-full">
           <FileUploadDemo
@@ -80,7 +76,7 @@ const Chat = ({
         </div>
       ) : (
         <>
-          <p className="text-center text-2xl font-bold sticky h-12 leading-10 text-white">
+          <p className="text-center text-xl font-semibold sticky h-14 leading-10 text-white px-4 flex items-center justify-center">
             {currActiveFile.file_name}
           </p>
           <div className="mx-10 flex flex-col gap-4 overflow-y-auto h-[calc(100%-9rem)] rounded-lg">
@@ -132,7 +128,7 @@ const Chat = ({
           </div>
         </>
       )}
-    </div>
+    </>
   );
 };
 

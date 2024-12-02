@@ -1,3 +1,4 @@
+import Feature from "@/components/Feature";
 import Header from "@/components/Header";
 import Start from "@/components/Start";
 
@@ -8,6 +9,7 @@ export default function Home() {
         
       <Header />
         <Start />
+        <Feature />
       </div>
     </div>
   );
