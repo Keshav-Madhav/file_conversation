@@ -15,8 +15,8 @@ export const ourFileRouter = {
     
     // Specific document types
     "application/pdf": { maxFileSize: "16MB", maxFileCount: 1 },
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": { maxFileSize: "16MB", maxFileCount: 1 }, // PPTX
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { maxFileSize: "16MB", maxFileCount: 1 }, // DOCX
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": { maxFileSize: "32MB", maxFileCount: 1 }, // PPTX
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { maxFileSize: "32MB", maxFileCount: 1 }, // DOCX
   })
     .middleware(async () => {
       // This code runs on your server before upload
